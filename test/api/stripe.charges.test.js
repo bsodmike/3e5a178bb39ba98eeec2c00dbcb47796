@@ -15,6 +15,49 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 
 describe('Stripe API Tests', () => {
+  describe('GET /charges', () => {
+    it('it should return response with list of Stripe charges for supplied customer', (done) => {
+      chai.request(server)
+          .get('/charges?customer_id=cus_AIBgNxPoMy8ITG')
+          .then((res) => {
+            expect(res).to.have.status(200);
+            expect(res.body).to.have.all.keys(['customer', 'charges', 'chargesCount', 'hasMore', 'url']);
+
+            done();
+          })
+          .catch((err) => {
+            console.log('Error: %s', util.inspect(err.response.body.error));
+            throw err;
+          });
+    });
+
+    describe('Without customer token', () => {
+      it('it should return 422 with error JSON', (done) => {
+        chai.request(server)
+            .get('/charges')
+            .then(() => {})
+            .catch((err) => {
+              expect(err).to.have.status(422);
+              expect(err.response.body.error).to.eql('Required parameter missing!');
+              done();
+            });
+      });
+    });
+
+    describe('With invalid customer token', () => {
+      it('it should return 400 with error JSON', (done) => {
+        chai.request(server)
+            .get('/charges?customer_id=YOLO')
+            .then(() => {})
+            .catch((err) => {
+              expect(err).to.have.status(400);
+              expect(err.response.body.error).to.eql('No such customer: YOLO');
+              done();
+            });
+      });
+    });
+  });
+
   describe('POST /charges', () => {
     it('it should return response with my Stripe charge details', (done) => {
       const charge = {

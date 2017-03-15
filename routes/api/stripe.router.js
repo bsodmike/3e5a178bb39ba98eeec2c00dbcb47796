@@ -59,6 +59,36 @@ module.exports = (app, router) => {
     });
   });
 
+  router.get('/charges', (req, res) => {
+    const customerToken = req.query.customer_id;
+
+    if (customerToken === undefined) {
+      res.status(422).json({ error: 'Required parameter missing!' });
+      return;
+    }
+
+    stripe.charges.list({
+      customer: customerToken,
+    }).then((charges) => {
+      const chargeData = charges.data;
+
+      res.json({
+        customer: customerToken,
+        charges: chargeData,
+        chargesCount: chargeData.length,
+        hasMore: charges.has_more,
+        url: charges.url,
+      });
+    }).catch((err) => {
+      if (err.type === 'StripeInvalidRequestError' && err.message.match('No such customer')) {
+        res.status(400).json({ error: err.message });
+        return;
+      }
+
+      res.status(422).json({ error: err });
+    });
+  });
+
   router.post('/charges', (req, res) => {
     const data = req.body;
     const customerToken = data.customer;
