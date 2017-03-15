@@ -4,12 +4,25 @@ const stripe = require('stripe')(process.env.STRIPE_KEY);
 
 module.exports = (app, router) => {
   router.post('/customers', (req, res) => {
-    const customerEmail = req.body.email;
+    const data = req.body;
+
+    if (data.email === undefined) {
+      res.status(422).json({ error: 'Required parameter missing!' });
+      return;
+    }
+
+    const customerEmail = data.email;
+    let description;
 
     // FIXME validate email
 
+    if (data.description !== undefined) {
+      description = data.description;
+    }
+
     stripe.customers.create({
       email: customerEmail,
+      description,
     }).then((customer) => {
       res.json({
         id: customer.id,
