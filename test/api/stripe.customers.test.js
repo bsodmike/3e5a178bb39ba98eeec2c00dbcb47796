@@ -18,6 +18,13 @@ describe('Stripe API Tests', () => {
     it('it should return response with my Stripe customer details', (done) => {
       const payload = {
         email: 'john.doe@gmail.com',
+        source: {
+          name: 'John Dorian',
+          number: '4242424242424242',
+          cvc: '123',
+          expMonth: '12',
+          expYear: '20',
+        },
       };
       chai.request(server)
           .post('/customers')
@@ -37,6 +44,13 @@ describe('Stripe API Tests', () => {
         const payload = {
           email: 'john.doe@gmail.com',
           description: 'New customer',
+          source: {
+            name: 'John Dorian',
+            number: '4242424242424242',
+            cvc: '123',
+            expMonth: '12',
+            expYear: '20',
+          },
         };
         chai.request(server)
             .post('/customers')
@@ -60,6 +74,13 @@ describe('Stripe API Tests', () => {
             mobileOS: 'android',
             device: 'tablet',
           },
+          source: {
+            name: 'John Dorian',
+            number: '4242424242424242',
+            cvc: '123',
+            expMonth: '12',
+            expYear: '20',
+          },
         };
         chai.request(server)
             .post('/customers')
@@ -75,9 +96,11 @@ describe('Stripe API Tests', () => {
       });
     });
 
-    describe('Excluding required param', () => {
+    describe('Excluding required param for email', () => {
       it('it should return 422 with error JSON', (done) => {
-        const payload = {};
+        const payload = {
+          source: {},
+        };
         chai.request(server)
             .post('/customers')
             .send(payload)
@@ -90,10 +113,28 @@ describe('Stripe API Tests', () => {
       });
     });
 
+    describe('Excluding required param for payment source', () => {
+      it('it should return 422 with error JSON', (done) => {
+        const payload = {
+          email: 'john@doe.com',
+        };
+        chai.request(server)
+            .post('/customers')
+            .send(payload)
+            .then(() => {})
+            .catch((err) => {
+              expect(err).to.have.status(422);
+              expect(err.response.body.error).to.eql('Required parameter for payment source is missing!');
+              done();
+            });
+      });
+    });
+
     describe('With invalid email', () => {
       it('it should return 422 with error JSON', (done) => {
         const payload = {
           email: '<script src="http://hax0r.js"></script>',
+          source: {},
         };
         chai.request(server)
             .post('/customers')
