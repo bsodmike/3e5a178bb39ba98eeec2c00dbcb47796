@@ -52,6 +52,29 @@ describe('Stripe API Tests', () => {
       });
     });
 
+    describe('Including optional metadata', () => {
+      it('it should return response with my Stripe customer details', (done) => {
+        const payload = {
+          email: 'john.doe@gmail.com',
+          metaData: {
+            mobileOS: 'android',
+            device: 'tablet',
+          },
+        };
+        chai.request(server)
+            .post('/customers')
+            .send(payload)
+            .then((res) => {
+              expect(res).to.have.status(200);
+              expect(res.body).to.have.all.keys(['id', 'email', 'created', 'accountBalance']);
+              done();
+            })
+            .catch((err) => {
+              throw err;
+            });
+      });
+    });
+
     describe('Excluding required param', () => {
       it('it should return 422 with error JSON', (done) => {
         const payload = {};
@@ -62,6 +85,23 @@ describe('Stripe API Tests', () => {
             .catch((err) => {
               expect(err).to.have.status(422);
               expect(err.response.body.error).to.eql('Required parameter missing!');
+              done();
+            });
+      });
+    });
+
+    describe('With invalid email', () => {
+      it('it should return 422 with error JSON', (done) => {
+        const payload = {
+          email: '<script src="http://hax0r.js"></script>',
+        };
+        chai.request(server)
+            .post('/customers')
+            .send(payload)
+            .then(() => {})
+            .catch((err) => {
+              expect(err).to.have.status(422);
+              expect(err.response.body.error).to.eql('Required parameter has invalid format!');
               done();
             });
       });
