@@ -67,3 +67,77 @@ If this param is missing the response will be a `422` status; however, if this i
 
 * Split up the `api/stripe.router.js` into separate files, one for customers and one for charges.
 * Use [`apidocjs`](http://apidocjs.com/) to maintain API docs (or an alternative).
+
+## Stories
+
+Here's the output of `npm test`, during my last run:
+
+```
+mdesilva@MacBook-Pro-15-inch [19:48:55] work/manageflitter-billing-task {2.2.3} ⭠ master±
+-> % npm test
+
+> @ test /Users/mdesilva/work/manageflitter-billing-task
+> NODE_ENv=test && mocha --recursive --timeout=10000
+
+
+
+✓ App is running at http://localhost:3000 in development mode
+  Press CTRL-C to stop
+
+  Stripe API Tests
+    GET /charges
+      ✓ it should return response with list of Stripe charges for supplied customer (1882ms)
+      Without customer token
+        ✓ it should return 422 with error JSON
+      With invalid customer token
+        ✓ it should return 400 with error JSON (1250ms)
+    POST /charges
+      ✓ it should return response with my Stripe charge details (1612ms)
+      Excluding required param for Customer token
+        ✓ it should return 422 with error JSON
+      Excluding required param for charge currency
+        ✓ it should return 422 with error JSON
+      Excluding required param for charge amount
+        ✓ it should return 422 with error JSON
+      With non-cents amount for purchase
+        ✓ it should return 422 with error JSON
+      With invalid amount for purchase
+        ✓ it should return 422 with error JSON
+      With invalid purchase currency
+        ✓ it should return 422 with error JSON
+
+  Stripe API Tests
+    POST /customers
+      ✓ it should return response with my Stripe customer details (1230ms)
+      Including optional description
+        ✓ it should return response with my Stripe customer details (1186ms)
+      Including optional metadata
+        ✓ it should return response with my Stripe customer details (1133ms)
+      Excluding required param for email
+        ✓ it should return 422 with error JSON
+      Excluding required param for payment source
+        ✓ it should return 422 with error JSON
+      With invalid email
+        ✓ it should return 422 with error JSON
+
+  eslint
+
+/Users/mdesilva/work/manageflitter-billing-task/index.js
+  17:3  warning  Unexpected console statement  no-console
+  18:3  warning  Unexpected console statement  no-console
+  21:5  warning  Unexpected console statement  no-console
+
+/Users/mdesilva/work/manageflitter-billing-task/routes/api/stripe.router.js
+  57:7  warning  Unexpected console statement  no-console
+
+/Users/mdesilva/work/manageflitter-billing-task/test/api/stripe.charges.test.js
+  29:13  warning  Unexpected console statement  no-console
+  82:13  warning  Unexpected console statement  no-console
+
+✖ 6 problems (0 errors, 6 warnings)
+
+    ✓ should have no errors in ./ (930ms)
+
+
+  17 passing (
+```
