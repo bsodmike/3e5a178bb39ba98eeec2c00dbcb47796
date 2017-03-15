@@ -52,3 +52,9 @@ This end-point expects a JSON payload with the following required details:
 ```
 
 Any failure will return a `422` status with error details as the JSON response. 
+
+### GET /charges?customer_id=\<id\>
+
+This end-point requires a `customer_id` param. 
+ 
+If this param is missing the response will be a `422` status; however, if this is invalid, the response will be `400` with the error message returned in the response body.
