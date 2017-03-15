@@ -1,7 +1,6 @@
 const stripe = require('stripe')(process.env.STRIPE_KEY);
 
 const validator = require('validator');
-
 // const util = require('util');
 
 module.exports = (app, router) => {
@@ -71,17 +70,44 @@ module.exports = (app, router) => {
       return;
     }
 
-    // if (!validate.isNumeric(amount)) {
-    //   res.status(422).json({ error: 'Charge amount must be cents only!' });
-    //   return;
-    // }
+    if (amount === undefined) {
+      res.status(422).json({ error: 'Charge amount as cents is required!' });
+      return;
+    }
+
+    if (currency === undefined) {
+      res.status(422).json({ error: 'Charge currency is required!' });
+      return;
+    }
+
+    if (!validator.isNumeric(amount.toString())) {
+      res.status(422).json({ error: 'Charge amount must be cents only!' });
+      return;
+    }
+
+    if (currency.length > 3 || !currency.match(/([a-zA-Z]{3})/)) {
+      res.status(422).json({ error: 'Charge currency is invalid!' });
+      return;
+    }
 
     stripe.charges.create({
       customer: customerToken,
       amount,
       currency,
     }).then((charge) => {
-      console.log('RESULT %s', charge);
+      if (charge.paid) {
+        res.json({
+          id: charge.id,
+          customer: charge.customer,
+          amount: charge.amount,
+          currency: charge.currency,
+          paid: charge.paid,
+          created: charge.created,
+        });
+      } else {
+        // FIXME
+        throw Error.new('Handle when charge \'paid\' property is false!');
+      }
     })
     .catch((err) => {
       res.status(422).json({ error: err });
