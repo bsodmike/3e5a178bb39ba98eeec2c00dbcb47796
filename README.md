@@ -1,5 +1,9 @@
 # bsodmike-billing-task
 
+## Setup
+
+Run `npm install -g yarn && yarn` in the app root.  Then run `npm test`.
+
 ## API
 
 The RESTful API exposed in this app is documented below.  For the purpose of this task, this API remains 'unsecured'.  Any production use, should implement token-authentication, and include other basic-safeguards such as CORS/CSRF protection via modules such as `helmet` or `lusca`.
