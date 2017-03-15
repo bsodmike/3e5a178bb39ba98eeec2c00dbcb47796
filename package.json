@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "./node_modules/.bin/eslint *.js",
     "start": "NODE_ENV=dev && node index.js",
-    "test": "NODE_ENv=test && mocha --recursive "
+    "test": "NODE_ENv=test && mocha --recursive --timeout=10000"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",
