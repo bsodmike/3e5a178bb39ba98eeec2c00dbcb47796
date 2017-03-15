@@ -8,12 +8,13 @@
   },
   "scripts": {
     "lint": "./node_modules/.bin/eslint *.js",
-    "start": "node index.js",
-    "test": "mocha --timeout 10000"
+    "start": "NODE_ENV=dev && node index.js",
+    "test": "NODE_ENv=test && mocha --recursive "
   },
   "devDependencies": {
     "babel-eslint": "^7.1.1",
     "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
     "eslint": "^3.17.1",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-plugin-import": "^2.2.0",
