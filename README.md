@@ -58,3 +58,8 @@ Any failure will return a `422` status with error details as the JSON response.
 This end-point requires a `customer_id` param. 
  
 If this param is missing the response will be a `422` status; however, if this is invalid, the response will be `400` with the error message returned in the response body.
+
+## Improvements
+
+* Split up the `api/stripe.router.js` into separate files, one for customers and one for charges.
+* Use [`apidocjs`](http://apidocjs.com/) to maintain API docs (or an alternative).
