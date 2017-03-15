@@ -56,3 +56,6 @@ typings/
 
 # IntelliJ IDE
 .idea/
+
+# dotenv config
+.env

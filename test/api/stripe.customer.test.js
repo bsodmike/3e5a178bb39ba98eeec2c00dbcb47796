@@ -1,3 +1,10 @@
+const Promise = require('bluebird');
+
+// Add promise support to chai if this does not exist natively.
+if (!global.Promise) {
+  global.Promise = Promise;
+}
+
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../../index');
@@ -13,10 +20,12 @@ describe('Stripe API Tests', () => {
       chai.request(server)
           .post('/customers')
           .send(payload)
-          .end((err, res) => {
-            console.log('Error: %s', err);
+          .then((res) => {
             expect(res).to.have.status(200);
             done();
+          })
+          .catch((err) => {
+            throw err;
           });
     });
   });
