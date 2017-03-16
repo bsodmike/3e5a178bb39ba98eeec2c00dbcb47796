@@ -14,7 +14,7 @@ const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-const createCustomer = () => new Promise((resolve, reject) => {
+const createCustomer = () => {
   const payload = {
     email: 'john.doe@gmail.com',
     source: {
@@ -26,28 +26,15 @@ const createCustomer = () => new Promise((resolve, reject) => {
     },
   };
 
-  chai.request(server)
+  return chai.request(server)
       .post('/customers')
-      .send(payload)
-      .then((res) => {
-        resolve(res.body);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-});
+      .send(payload);
+};
 
-const chargeCustomer = charge => new Promise((resolve, reject) => {
-  chai.request(server)
-      .post('/charges')
-      .send(charge)
-      .then((res) => {
-        resolve(res);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-});
+const chargeCustomer = charge =>
+    chai.request(server)
+        .post('/charges')
+        .send(charge);
 
 describe('Stripe API Integration Tests', () => {
   describe('Create a customer and create x3 charges', () => {
@@ -57,8 +44,8 @@ describe('Stripe API Integration Tests', () => {
         currency: 'usd',
       };
 
-      createCustomer().then((customer) => {
-        charge.customer = customer.id;
+      createCustomer().then((res) => {
+        charge.customer = res.body.id;
         charge.amount = charges[0];
 
         return chargeCustomer(charge);
@@ -83,14 +70,7 @@ describe('Stripe API Integration Tests', () => {
 
               expect(res).to.have.status(200);
               expect(res.body).to.have.all.keys(['customer', 'charges', 'chargesCount', 'hasMore', 'url']);
-
-              /**
-               * FIXME the following assertion seems to break chai, causing an
-               * 'Unhandled promise rejection' warning via Bluebird.
-               *
-               * This needs further investigation.
-               */
-              // expect(res.body).to.have.property('chargesCount').and.eql('3');
+              expect(res.body).to.have.property('chargesCount').and.eql(3);
 
               // Obtain total for all charges fetched for this customer
               let chargeTotal = 0;
@@ -106,13 +86,11 @@ describe('Stripe API Integration Tests', () => {
               done();
             })
             .catch((err) => {
-              console.log('Error: %s', util.inspect(err.response.body.error));
-              throw err;
+              console.log('Error [GET /charges]: %s', util.inspect(err));
             });
       })
       .catch((err) => {
-        console.log('Error: %s', util.inspect(err.response.body.error));
-        throw err;
+        console.log('Error: %s', util.inspect(err));
       });
     });
   });
