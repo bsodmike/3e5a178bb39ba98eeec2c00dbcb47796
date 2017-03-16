@@ -73,8 +73,8 @@ If this param is missing the response will be a `422` status; however, if this i
 Here's the output of `npm test`, during my last run:
 
 ```
-mdesilva@MacBook-Pro-15-inch [07:41:21] work/manageflitter-billing-task {2.2.3} ⭠ master±
--> % npm test                                                                          1 ↵
+mdesilva@MacBook-Pro-15-inch [09:10:41] work/manageflitter-billing-task {2.2.3} ⭠ master±
+-> % npm test                                                                                        1 ↵
 
 > @ test /Users/mdesilva/work/manageflitter-billing-task
 > NODE_ENv=test && mocha --recursive --timeout=10000
@@ -86,13 +86,13 @@ mdesilva@MacBook-Pro-15-inch [07:41:21] work/manageflitter-billing-task {2.2.3} 
 
   Stripe API Tests
     GET /charges
-      ✓ it should return response with list of Stripe charges for supplied customer (1867ms)
+      ✓ it should return response with list of Stripe charges for supplied customer (4283ms)
       Without customer token
         ✓ it should return 422 with error JSON
       With invalid customer token
-        ✓ it should return 400 with error JSON (988ms)
+        ✓ it should return 400 with error JSON (1203ms)
     POST /charges
-      ✓ it should return response with my Stripe charge details (2479ms)
+      ✓ it should return response with my Stripe charge details (2446ms)
       Excluding required param for Customer token
         ✓ it should return 422 with error JSON
       Excluding required param for charge currency
@@ -108,17 +108,21 @@ mdesilva@MacBook-Pro-15-inch [07:41:21] work/manageflitter-billing-task {2.2.3} 
 
   Stripe API Tests
     POST /customers
-      ✓ it should return response with my Stripe customer details (1142ms)
+      ✓ it should return response with my Stripe customer details (1092ms)
       Including optional description
-        ✓ it should return response with my Stripe customer details (1242ms)
+        ✓ it should return response with my Stripe customer details (1066ms)
       Including optional metadata
-        ✓ it should return response with my Stripe customer details (1217ms)
+        ✓ it should return response with my Stripe customer details (1082ms)
       Excluding required param for email
         ✓ it should return 422 with error JSON
       Excluding required param for payment source
         ✓ it should return 422 with error JSON
       With invalid email
         ✓ it should return 422 with error JSON
+
+  Stripe API Integration Tests
+    Create a customer and create x3 charges
+      ✓ it should retrieve list of charges and verify the amounts (6022ms)
 
   eslint
 
@@ -131,13 +135,18 @@ mdesilva@MacBook-Pro-15-inch [07:41:21] work/manageflitter-billing-task {2.2.3} 
   57:7  warning  Unexpected console statement  no-console
 
 /Users/mdesilva/work/manageflitter-billing-task/test/api/stripe.charges.test.js
-   64:13  warning  Unexpected console statement  no-console
-  118:9   warning  Unexpected console statement  no-console
+   75:15  warning  Unexpected console statement  no-console
+   80:9   warning  Unexpected console statement  no-console
+  134:9   warning  Unexpected console statement  no-console
 
-✖ 6 problems (0 errors, 6 warnings)
+/Users/mdesilva/work/manageflitter-billing-task/test/api/stripe.integration.test.js
+  109:15  warning  Unexpected console statement  no-console
+  114:9   warning  Unexpected console statement  no-console
 
-    ✓ should have no errors in ./ (956ms)
+✖ 9 problems (0 errors, 9 warnings)
+
+    ✓ should have no errors in ./ (1107ms)
 
 
-  17 passing (10s)
+  18 passing (18s)
 ```
