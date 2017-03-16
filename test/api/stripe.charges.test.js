@@ -52,18 +52,34 @@ const chargeCustomer = charge => new Promise((resolve, reject) => {
 describe('Stripe API Tests', () => {
   describe('GET /charges', () => {
     it('it should return response with list of Stripe charges for supplied customer', (done) => {
-      chai.request(server)
-          .get('/charges?customer_id=cus_AIBgNxPoMy8ITG')
-          .then((res) => {
-            expect(res).to.have.status(200);
-            expect(res.body).to.have.all.keys(['customer', 'charges', 'chargesCount', 'hasMore', 'url']);
+      const charge = {
+        currency: 'usd',
+        amount: 2000,
+      };
 
-            done();
-          })
-          .catch((err) => {
-            console.log('Error: %s', util.inspect(err.response.body.error));
-            throw err;
-          });
+      createCustomer().then((customer) => {
+        charge.customer = customer.id;
+
+        return chargeCustomer(charge);
+      })
+      .then((resCharge) => {
+        chai.request(server)
+            .get(`/charges?customer_id=${resCharge.body.customer}`)
+            .then((res) => {
+              expect(res).to.have.status(200);
+              expect(res.body).to.have.all.keys(['customer', 'charges', 'chargesCount', 'hasMore', 'url']);
+
+              done();
+            })
+            .catch((err) => {
+              console.log('Error: %s', util.inspect(err.response.body.error));
+              throw err;
+            });
+      })
+      .catch((err) => {
+        console.log('Error: %s', util.inspect(err.response.body.error));
+        throw err;
+      });
     });
 
     describe('Without customer token', () => {
