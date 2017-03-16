@@ -8,7 +8,7 @@ if (!global.Promise) {
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../../index');
-const util = require('util');
+// const util = require('util');
 
 const expect = chai.expect;
 
@@ -38,13 +38,13 @@ const chargeCustomer = charge =>
 
 describe('Stripe API Integration Tests', () => {
   describe('Create a customer and create x3 charges', () => {
-    it('it should retrieve list of charges and verify the amounts', (done) => {
+    it('it should retrieve list of charges and verify the amounts', () => {
       const charges = [2000, 2500, 500];
       const charge = {
         currency: 'usd',
       };
 
-      createCustomer().then((res) => {
+      return createCustomer().then((res) => {
         charge.customer = res.body.id;
         charge.amount = charges[0];
 
@@ -63,7 +63,7 @@ describe('Stripe API Integration Tests', () => {
         return chargeCustomer(charge);
       })
       .then((resCharge) => {
-        chai.request(server)
+        return chai.request(server)
             .get(`/charges?customer_id=${resCharge.body.customer}`)
             .then((res) => {
               // console.log('RESULT: %s', util.inspect(res.body));
@@ -82,15 +82,7 @@ describe('Stripe API Integration Tests', () => {
               // Assert obtained charge total matches the expectation.
               const expectedTotal = charges.reduce((acc, val) => acc + val);
               expect(chargeTotal).to.eql(expectedTotal);
-
-              done();
-            })
-            .catch((err) => {
-              console.log('Error [GET /charges]: %s', util.inspect(err));
             });
-      })
-      .catch((err) => {
-        console.log('Error: %s', util.inspect(err));
       });
     });
   });
