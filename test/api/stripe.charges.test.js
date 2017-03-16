@@ -14,6 +14,41 @@ const expect = chai.expect;
 
 chai.use(chaiHttp);
 
+const createCustomer = () => new Promise((resolve, reject) => {
+  const payload = {
+    email: 'john.doe@gmail.com',
+    source: {
+      name: 'John Dorian',
+      number: '4242424242424242',
+      cvc: '123',
+      expMonth: '12',
+      expYear: '20',
+    },
+  };
+
+  chai.request(server)
+      .post('/customers')
+      .send(payload)
+      .then((res) => {
+        resolve(res.body);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+});
+
+const chargeCustomer = charge => new Promise((resolve, reject) => {
+  chai.request(server)
+      .post('/charges')
+      .send(charge)
+      .then((res) => {
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+});
+
 describe('Stripe API Tests', () => {
   describe('GET /charges', () => {
     it('it should return response with list of Stripe charges for supplied customer', (done) => {
@@ -61,27 +96,28 @@ describe('Stripe API Tests', () => {
   describe('POST /charges', () => {
     it('it should return response with my Stripe charge details', (done) => {
       const charge = {
-        customer: 'cus_AIBgNxPoMy8ITG',
         currency: 'usd',
         amount: 2000,
       };
 
-      chai.request(server)
-          .post('/charges')
-          .send(charge)
-          .then((res) => {
-            const chargeResult = res.body;
+      createCustomer().then((customer) => {
+        charge.customer = customer.id;
 
-            expect(res).to.have.status(200);
-            expect(chargeResult.paid).to.eql(true);
-            expect(chargeResult).to.have.all.keys(['id', 'customer', 'amount', 'currency', 'created', 'paid']);
+        return chargeCustomer(charge);
+      })
+      .then((res) => {
+        const chargeResult = res.body;
 
-            done();
-          })
-          .catch((err) => {
-            console.log('Error: %s', util.inspect(err.response.body.error));
-            throw err;
-          });
+        expect(res).to.have.status(200);
+        expect(chargeResult.paid).to.eql(true);
+        expect(chargeResult).to.have.all.keys(['id', 'customer', 'amount', 'currency', 'created', 'paid']);
+
+        done();
+      })
+      .catch((err) => {
+        console.log('Error: %s', util.inspect(err.response.body.error));
+        throw err;
+      });
     });
 
     describe('Excluding required param for Customer token', () => {
