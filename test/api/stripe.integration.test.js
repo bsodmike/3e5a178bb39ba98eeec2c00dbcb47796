@@ -43,7 +43,7 @@ const chargeCustomer = charge => new Promise((resolve, reject) => {
 describe('Stripe API Integration Tests', () => {
   describe('Create a customer and create x3 charges', () => {
     it('it should retrieve list of charges and verify the amounts', (done) => {
-      const charges = [2000, 3000, 5000];
+      const charges = [2000, 2500, 500];
       const charge = {
         currency: 'usd',
       };
