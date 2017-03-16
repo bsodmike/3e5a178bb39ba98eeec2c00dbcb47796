@@ -28,41 +28,41 @@ Therefore, creating a customer requires the card details to be passed as well.  
       expMonth: '12',
       expYear: '20',
     }
-    
+
     // optional
     // An arbitrary string that you can attach to a customer object
     description: 'New Customer',
-    
+
     // A set of key/value pairs that you can attach to a customer object
     meta_data: { }
 }
 ```
 
-Any failure will return a `422` status with error details as the JSON response. 
+Any failure will return a `422` status with error details as the JSON response.
 
 ### POST /charges
 
 This end-point expects a JSON payload with the following required details:
 
 ```
-{   
+{
     // required
     // The customer token
     customer: 'cus_AIBgNxPoMy8ITG',
-    
+
     currency: 'usd',
-    
+
     // amount in cents; string is also fine.
     amount: 2000,
 }
 ```
 
-Any failure will return a `422` status with error details as the JSON response. 
+Any failure will return a `422` status with error details as the JSON response.
 
 ### GET /charges?customer_id=\<id\>
 
-This end-point requires a `customer_id` param. 
- 
+This end-point requires a `customer_id` param.
+
 If this param is missing the response will be a `422` status; however, if this is invalid, the response will be `400` with the error message returned in the response body.
 
 ## Improvements
@@ -75,8 +75,8 @@ If this param is missing the response will be a `422` status; however, if this i
 Here's the output of `npm test`, during my last run:
 
 ```
-mdesilva@MacBook-Pro-15-inch [09:45:15] work/manageflitter-billing-task {2.2.3} ⭠ master±
--> % npm test
+mdesilva@MacBook-Pro-15-inch [09:10:41] work/manageflitter-billing-task {2.2.3} ⭠ master±
+-> % npm test                                                                                        1 ↵
 
 > @ test /Users/mdesilva/work/manageflitter-billing-task
 > NODE_ENv=test && mocha --recursive --timeout=10000
@@ -88,13 +88,13 @@ mdesilva@MacBook-Pro-15-inch [09:45:15] work/manageflitter-billing-task {2.2.3} 
 
   Stripe API Tests
     GET /charges
-      ✓ it should return response with list of Stripe charges for supplied customer (4956ms)
+      ✓ it should return response with list of Stripe charges for supplied customer (4283ms)
       Without customer token
         ✓ it should return 422 with error JSON
       With invalid customer token
-        ✓ it should return 400 with error JSON (1079ms)
+        ✓ it should return 400 with error JSON (1203ms)
     POST /charges
-      ✓ it should return response with my Stripe charge details (3201ms)
+      ✓ it should return response with my Stripe charge details (2446ms)
       Excluding required param for Customer token
         ✓ it should return 422 with error JSON
       Excluding required param for charge currency
@@ -110,11 +110,11 @@ mdesilva@MacBook-Pro-15-inch [09:45:15] work/manageflitter-billing-task {2.2.3} 
 
   Stripe API Tests
     POST /customers
-      ✓ it should return response with my Stripe customer details (1168ms)
+      ✓ it should return response with my Stripe customer details (1092ms)
       Including optional description
-        ✓ it should return response with my Stripe customer details (1522ms)
+        ✓ it should return response with my Stripe customer details (1066ms)
       Including optional metadata
-        ✓ it should return response with my Stripe customer details (1688ms)
+        ✓ it should return response with my Stripe customer details (1082ms)
       Excluding required param for email
         ✓ it should return 422 with error JSON
       Excluding required param for payment source
@@ -124,7 +124,7 @@ mdesilva@MacBook-Pro-15-inch [09:45:15] work/manageflitter-billing-task {2.2.3} 
 
   Stripe API Integration Tests
     Create a customer and create x3 charges
-      ✓ it should retrieve list of charges and verify the amounts (7129ms)
+      ✓ it should retrieve list of charges and verify the amounts (6022ms)
 
   eslint
 
@@ -142,12 +142,12 @@ mdesilva@MacBook-Pro-15-inch [09:45:15] work/manageflitter-billing-task {2.2.3} 
   134:9   warning  Unexpected console statement  no-console
 
 /Users/mdesilva/work/manageflitter-billing-task/test/api/stripe.integration.test.js
-  74:17  warning  Unexpected console statement  no-console
-  99:9   warning  Unexpected console statement  no-console
+  109:15  warning  Unexpected console statement  no-console
+  114:9   warning  Unexpected console statement  no-console
 
 ✖ 9 problems (0 errors, 9 warnings)
 
-    ✓ should have no errors in ./ (1319ms)
+    ✓ should have no errors in ./ (1107ms)
 
 
   18 passing (22s)
