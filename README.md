@@ -4,6 +4,8 @@
 
 Run `npm install -g yarn && yarn` in the app root.  Then run `npm test`.
 
+This was tested with `node v6.9.4`.
+
 ## API
 
 The RESTful API exposed in this app is documented below.  For the purpose of this task, this API remains 'unsecured'.  Any production use, should implement token-authentication, and include other basic-safeguards such as CORS/CSRF protection via modules such as `helmet` or `lusca`.
@@ -149,4 +151,13 @@ mdesilva@MacBook-Pro-15-inch [09:45:15] work/manageflitter-billing-task {2.2.3} 
 
 
   18 passing (22s)
+```
+
+## Submission
+
+The repo name was generated as a MD5 hash as per the requirements
+
+```
+-> % echo "bsodmike-billing-task" | openssl md5
+3e5a178bb39ba98eeec2c00dbcb47796
 ```
