@@ -36,6 +36,28 @@ const chargeCustomer = charge =>
         .post('/charges')
         .send(charge);
 
+const verifyCharges = (resCharge, charges) =>
+    chai.request(server)
+        .get(`/charges?customer_id=${resCharge.body.customer}`)
+        .then((res) => {
+          // console.log('RESULT: %s', util.inspect(res.body));
+
+          expect(res).to.have.status(200);
+          expect(res.body).to.have.all.keys(['customer', 'charges', 'chargesCount', 'hasMore', 'url']);
+          expect(res.body).to.have.property('chargesCount').and.eql(3);
+
+          // Obtain total for all charges fetched for this customer
+          let chargeTotal = 0;
+
+          res.body.charges.forEach((chargeDetail) => {
+            chargeTotal += parseInt(chargeDetail.amount, 10);
+          });
+
+          // Assert obtained charge total matches the expectation.
+          const expectedTotal = charges.reduce((acc, val) => acc + val);
+          expect(chargeTotal).to.eql(expectedTotal);
+        });
+
 describe('Stripe API Integration Tests', () => {
   describe('Create a customer and create x3 charges', () => {
     it('it should retrieve list of charges and verify the amounts', () => {
@@ -62,28 +84,9 @@ describe('Stripe API Integration Tests', () => {
 
         return chargeCustomer(charge);
       })
-      .then((resCharge) => {
-        return chai.request(server)
-            .get(`/charges?customer_id=${resCharge.body.customer}`)
-            .then((res) => {
-              // console.log('RESULT: %s', util.inspect(res.body));
-
-              expect(res).to.have.status(200);
-              expect(res.body).to.have.all.keys(['customer', 'charges', 'chargesCount', 'hasMore', 'url']);
-              expect(res.body).to.have.property('chargesCount').and.eql(3);
-
-              // Obtain total for all charges fetched for this customer
-              let chargeTotal = 0;
-
-              res.body.charges.forEach((chargeDetail) => {
-                chargeTotal += parseInt(chargeDetail.amount, 10);
-              });
-
-              // Assert obtained charge total matches the expectation.
-              const expectedTotal = charges.reduce((acc, val) => acc + val);
-              expect(chargeTotal).to.eql(expectedTotal);
-            });
-      });
+      .then(
+          resCharge => verifyCharges(resCharge, charges)
+      );
     });
   });
 });

@@ -3,7 +3,7 @@
   "rules": {
     "func-names": ["error", "never"],
     "no-new": "off",
-//    "arrow-body-style": ["error", "always"]
+    "comma-dangle": ["error", "always-multiline"],
     "arrow-body-style": ["error", "as-needed", { "requireReturnForObjectLiteral": true }]
   }
 }
