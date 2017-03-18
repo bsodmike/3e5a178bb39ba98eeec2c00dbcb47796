@@ -8,7 +8,6 @@ if (!global.Promise) {
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../../index');
-const util = require('util');
 
 const expect = chai.expect;
 
@@ -51,39 +50,29 @@ const chargeCustomer = charge => new Promise((resolve, reject) => {
 
 describe('Stripe API Tests', () => {
   describe('GET /charges', () => {
-    it('it should return response with list of Stripe charges for supplied customer', (done) => {
+    it('should return response with list of Stripe charges for supplied customer', () => {
       const charge = {
         currency: 'usd',
         amount: 2000,
       };
 
-      createCustomer().then((customer) => {
+      return createCustomer().then((customer) => {
         charge.customer = customer.id;
 
         return chargeCustomer(charge);
       })
-      .then((resCharge) => {
+      .then(resCharge =>
         chai.request(server)
             .get(`/charges?customer_id=${resCharge.body.customer}`)
             .then((res) => {
               expect(res).to.have.status(200);
               expect(res.body).to.have.all.keys(['customer', 'charges', 'chargesCount', 'hasMore', 'url']);
-
-              done();
             })
-            .catch((err) => {
-              console.log('Error: %s', util.inspect(err.response.body.error));
-              throw err;
-            });
-      })
-      .catch((err) => {
-        console.log('Error: %s', util.inspect(err.response.body.error));
-        throw err;
-      });
+      );
     });
 
     describe('Without customer token', () => {
-      it('it should return 422 with error JSON', (done) => {
+      it('should return 422 with error JSON', (done) => {
         chai.request(server)
             .get('/charges')
             .then(() => {})
@@ -110,13 +99,13 @@ describe('Stripe API Tests', () => {
   });
 
   describe('POST /charges', () => {
-    it('it should return response with my Stripe charge details', (done) => {
+    it('should return response with my Stripe charge details', () => {
       const charge = {
         currency: 'usd',
         amount: 2000,
       };
 
-      createCustomer().then((customer) => {
+      return createCustomer().then((customer) => {
         charge.customer = customer.id;
 
         return chargeCustomer(charge);
@@ -127,17 +116,11 @@ describe('Stripe API Tests', () => {
         expect(res).to.have.status(200);
         expect(chargeResult.paid).to.eql(true);
         expect(chargeResult).to.have.all.keys(['id', 'customer', 'amount', 'currency', 'created', 'paid']);
-
-        done();
-      })
-      .catch((err) => {
-        console.log('Error: %s', util.inspect(err.response.body.error));
-        throw err;
       });
     });
 
     describe('Excluding required param for Customer token', () => {
-      it('it should return 422 with error JSON', (done) => {
+      it('should return 422 with error JSON', (done) => {
         const charge = {
           currency: 'usd',
           amount: 2000,
@@ -156,7 +139,7 @@ describe('Stripe API Tests', () => {
     });
 
     describe('Excluding required param for charge currency', () => {
-      it('it should return 422 with error JSON', (done) => {
+      it('should return 422 with error JSON', (done) => {
         const charge = {
           customer: 'token',
           amount: 2000,
@@ -175,7 +158,7 @@ describe('Stripe API Tests', () => {
     });
 
     describe('Excluding required param for charge amount', () => {
-      it('it should return 422 with error JSON', (done) => {
+      it('should return 422 with error JSON', (done) => {
         const charge = {
           customer: 'token',
           currency: 'usd',
@@ -194,7 +177,7 @@ describe('Stripe API Tests', () => {
     });
 
     describe('With non-cents amount for purchase', () => {
-      it('it should return 422 with error JSON', (done) => {
+      it('should return 422 with error JSON', (done) => {
         const charge = {
           customer: 'token',
           currency: 'usd',
@@ -214,7 +197,7 @@ describe('Stripe API Tests', () => {
     });
 
     describe('With invalid amount for purchase', () => {
-      it('it should return 422 with error JSON', (done) => {
+      it('should return 422 with error JSON', (done) => {
         const charge = {
           customer: 'token',
           currency: 'usd',
@@ -234,7 +217,7 @@ describe('Stripe API Tests', () => {
     });
 
     describe('With invalid purchase currency', () => {
-      it('it should return 422 with error JSON', (done) => {
+      it('should return 422 with error JSON', (done) => {
         const charge = {
           customer: 'token',
           currency: 'CAKE',

@@ -15,7 +15,7 @@ chai.use(chaiHttp);
 
 describe('Stripe API Tests', () => {
   describe('POST /customers', () => {
-    it('it should return response with my Stripe customer details', (done) => {
+    it('should return response with my Stripe customer details', () => {
       const payload = {
         email: 'john.doe@gmail.com',
         source: {
@@ -26,21 +26,18 @@ describe('Stripe API Tests', () => {
           expYear: '20',
         },
       };
-      chai.request(server)
+
+      return chai.request(server)
           .post('/customers')
           .send(payload)
           .then((res) => {
             expect(res).to.have.status(200);
             expect(res.body).to.have.all.keys(['id', 'email', 'created', 'accountBalance']);
-            done();
-          })
-          .catch((err) => {
-            throw err;
           });
     });
 
     describe('Including optional description', () => {
-      it('it should return response with my Stripe customer details', (done) => {
+      it('should return response with my Stripe customer details', () => {
         const payload = {
           email: 'john.doe@gmail.com',
           description: 'New customer',
@@ -52,22 +49,19 @@ describe('Stripe API Tests', () => {
             expYear: '20',
           },
         };
-        chai.request(server)
+
+        return chai.request(server)
             .post('/customers')
             .send(payload)
             .then((res) => {
               expect(res).to.have.status(200);
               expect(res.body).to.have.all.keys(['id', 'email', 'created', 'accountBalance']);
-              done();
-            })
-            .catch((err) => {
-              throw err;
             });
       });
     });
 
     describe('Including optional metadata', () => {
-      it('it should return response with my Stripe customer details', (done) => {
+      it('should return response with my Stripe customer details', () => {
         const payload = {
           email: 'john.doe@gmail.com',
           metaData: {
@@ -82,22 +76,19 @@ describe('Stripe API Tests', () => {
             expYear: '20',
           },
         };
-        chai.request(server)
+
+        return chai.request(server)
             .post('/customers')
             .send(payload)
             .then((res) => {
               expect(res).to.have.status(200);
               expect(res.body).to.have.all.keys(['id', 'email', 'created', 'accountBalance']);
-              done();
-            })
-            .catch((err) => {
-              throw err;
             });
       });
     });
 
     describe('Excluding required param for email', () => {
-      it('it should return 422 with error JSON', (done) => {
+      it('should return 422 with error JSON', (done) => {
         const payload = {
           source: {},
         };
@@ -114,7 +105,7 @@ describe('Stripe API Tests', () => {
     });
 
     describe('Excluding required param for payment source', () => {
-      it('it should return 422 with error JSON', (done) => {
+      it('should return 422 with error JSON', (done) => {
         const payload = {
           email: 'john@doe.com',
         };
@@ -131,7 +122,7 @@ describe('Stripe API Tests', () => {
     });
 
     describe('With invalid email', () => {
-      it('it should return 422 with error JSON', (done) => {
+      it('should return 422 with error JSON', (done) => {
         const payload = {
           email: '<script src="http://hax0r.js"></script>',
           source: {},

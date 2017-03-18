@@ -60,7 +60,7 @@ const verifyCharges = (resCharge, charges) =>
 
 describe('Stripe API Integration Tests', () => {
   describe('Create a customer and create x3 charges', () => {
-    it('it should retrieve list of charges and verify the amounts', () => {
+    it('should retrieve list of charges and verify the amounts', () => {
       const charges = [2000, 2500, 500];
       const charge = {
         currency: 'usd',
