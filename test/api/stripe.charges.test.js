@@ -85,7 +85,7 @@ describe('Stripe API Tests', () => {
     });
 
     describe('With invalid customer token', () => {
-      it('it should return 400 with error JSON', (done) => {
+      it('should return 400 with error JSON', (done) => {
         chai.request(server)
             .get('/charges?customer_id=YOLO')
             .then(() => {})
